@@ -1,0 +1,252 @@
+#7
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+from nltk.stem import WordNetLemmatizer
+
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('wordnet')
+
+def perform_lemmatization(text):
+    # Tokenize the text into words
+    words = word_tokenize(text)
+
+    # Perform part-of-speech tagging
+    pos_tags = pos_tag(words)
+
+    # Initialize lemmatizer
+    lemmatizer = WordNetLemmatizer()
+
+    # Map Penn Treebank POS tags to WordNet POS tags
+    pos_mapping = {'N': 'n', 'V': 'v', 'R': 'r', 'J': 'a'}
+
+    # Lemmatize words based on their POS tags
+    lemmatized_words = []
+    for word, pos in pos_tags:
+        pos = pos[0].upper()
+        pos = pos_mapping.get(pos, 'n')  # Default to noun if not found
+        lemmatized_word = lemmatizer.lemmatize(word, pos)
+        lemmatized_words.append(lemmatized_word)
+
+    return lemmatized_words
+
+# Example text
+text = "The quick brown foxes are jumping over the lazy dogs."
+
+# Perform lemmatization based on parts of speech
+lemmatized_text = perform_lemmatization(text)
+
+# Print the result
+print("Original Text:")
+print(text)
+print("\nLemmatized Text:")
+print(" ".join(lemmatized_text))
+
+
+#8
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer, WordNetLemmatizer
+# define an method
+def morphological_analysis(sentence):
+  words = word_tokenize(sentence)
+# Porter Stemmer
+  porter_stemmer = PorterStemmer()
+  porter_stems = [porter_stemmer.stem(word) for word in words]
+# Lancaster Stemmer
+  lancaster_stemmer = LancasterStemmer()
+  lancaster_stems = [lancaster_stemmer.stem(word) for word in words]
+# Snowball Stemmer
+  snowball_stemmer = SnowballStemmer('english')
+  snowball_stems = [snowball_stemmer.stem(word) for word in words]
+# WordNet Lemmatizer
+  lemmatizer = WordNetLemmatizer()
+  lemmas = [lemmatizer.lemmatize(word) for word in words]
+  print("Original Sentence:", sentence)
+  print("\nPorter Stems:", porter_stems)
+  print("Lancaster Stems:", lancaster_stems)
+  print("Snowball Stems:", snowball_stems)
+  print("WordNet Lemmas:", lemmas)
+
+sentence = "Morphological analysis is important for natural language processing."
+morphological_analysis(sentence)
+
+#9
+import nltk
+from nltk import bigrams
+from nltk.tokenize import word_tokenize
+from nltk.probability import FreqDist
+
+# Sample collection of three documents
+documents = [
+    "This is the first document.",
+    "The second document is here.",
+    "And this is the third document."
+]
+
+def find_bi_gram_frequency(documents):
+    # Tokenize and get bigrams for each document
+    bi_grams_list = [list(bigrams(word_tokenize(doc.lower()))) for doc in documents]
+
+    # Flatten the list of bigrams
+    all_bi_grams = [bi_gram for sublist in bi_grams_list for bi_gram in sublist]
+
+    # Calculate the frequency distribution of bigrams
+    bi_gram_freq = FreqDist(all_bi_grams)
+
+    # Display the number of unique bigrams
+    print(f"Number of unique bi-grams: {len(bi_gram_freq)}")
+
+    # Display the top 5 most common bigrams
+    print("\nTop 5 most common bi-grams:")
+    for bi_gram, frequency in bi_gram_freq.most_common(5):
+        print(f"{bi_gram}: {frequency}")
+
+# Find and display bi-gram frequency
+find_bi_gram_frequency(documents)
+
+#10
+
+# Python implementation for the
+# CYK Algorithm
+
+# Non-terminal symbols
+non_terminals = ["NP", "Nom", "Det", "AP", 
+				"Adv", "A"]
+terminals = ["book", "orange", "man", 
+			"tall", "heavy", 
+			"very", "muscular"]
+
+# Rules of the grammar
+R = {
+	"NP": [["Det", "Nom"]],
+	"Nom": [["AP", "Nom"], ["book"], 
+			["orange"], ["man"]],
+	"AP": [["Adv", "A"], ["heavy"], 
+			["orange"], ["tall"]],
+	"Det": [["a"]],
+	"Adv": [["very"], ["extremely"]],
+	"A": [["heavy"], ["orange"], ["tall"], 
+		["muscular"]]
+	}
+
+# Function to perform the CYK Algorithm
+def cykParse(w):
+	n = len(w)
+	
+	# Initialize the table
+	T = [[set([]) for j in range(n)] for i in range(n)]
+
+	# Filling in the table
+	for j in range(0, n):
+
+		# Iterate over the rules
+		for lhs, rule in R.items():
+			for rhs in rule:
+				
+				# If a terminal is found
+				if len(rhs) == 1 and \
+				rhs[0] == w[j]:
+					T[j][j].add(lhs)
+
+		for i in range(j, -1, -1): 
+			
+			# Iterate over the range i to j + 1 
+			for k in range(i, j + 1):	 
+
+				# Iterate over the rules
+				for lhs, rule in R.items():
+					for rhs in rule:
+						
+						# If a terminal is found
+						if len(rhs) == 2 and \
+						rhs[0] in T[i][k] and \
+						rhs[1] in T[k + 1][j]:
+							T[i][j].add(lhs)
+
+	# If word can be formed by rules 
+	# of given grammar
+	if len(T[0][n-1]) != 0:
+		print("True")
+	else:
+		print("False")
+	
+# Driver Code
+
+# Given string
+w = "a very heavy orange book".split()
+
+# Function Call
+cykParse(w)
+
+
+#11
+non_terminals = ["NP", "Nom", "Det", "AP", "Adv", "A"]
+terminals = ["book", "orange", "man", "tall", "heavy", "very", "muscular"]
+R = {
+    "NP": [["Det", "Nom"]],
+    "Nom": [["AP", "Nom"], ["book"], ["orange"], ["man"]],
+    "AP": [["Adv", "A"], ["heavy"], ["orange"], ["tall"]],
+    "Det": [["a"]],
+    "Adv": [["very"], ["extremely"]],
+    "A": [["heavy"], ["orange"], ["tall"], ["muscular"]]
+}
+
+def cykParse(w):
+    n = len(w)
+    T = [[set([]) for _ in range(n)] for _ in range(n)]
+
+    for j in range(n):
+        for lhs, rule in R.items():
+            for rhs in rule:
+                if len(rhs) == 1 and rhs[0] == w[j]:
+                    T[j][j].add(lhs)
+
+        for i in range(j, -1, -1):
+            for k in range(i, j + 1):
+                for lhs, rule in R.items():
+                    for rhs in rule:
+                        if len(rhs) == 2 and rhs[0] in T[i][k] and rhs[1] in T[k + 1][j]:
+                            T[i][j].add(lhs)
+
+    if len(T[0][n - 1]) != 0:
+        print("True")
+    else:
+        print("False")
+
+w = "a very tall red man".split()
+cykParse(w)
+
+#12
+import nltk
+from textblob import TextBlob
+from nltk import pos_tag, RegexpParser
+from nltk.tree import Tree
+
+# Sample sentence
+sampleSentence = '''This is a very good book, felt really nice reading it.'''
+
+# POS tagging
+sampleSentencePOS = pos_tag(nltk.word_tokenize(sampleSentence))
+
+# Grammar rules to find specific patterns
+PatternsToFind = '''
+    NP: {<JJ><VBG>}
+    NP: {<RB><JJ><NN>}
+'''
+
+# Chunking the listed patterns
+PatternParser = RegexpParser(PatternsToFind)
+ParsedResults = PatternParser.parse(sampleSentencePOS)
+
+# Getting the pattern results from the text data
+for subtree in ParsedResults.subtrees():
+    if isinstance(subtree, Tree) and subtree.label() == 'NP':
+        print(' '.join(word for word, tag in subtree.leaves()))
+
+# Overall sentiment score of adjectives
+adjectives = [word for word, tag in sampleSentencePOS if tag in ['JJ', 'JJR', 'JJS']]
+print('Adjectives:', ' '.join(adjectives))
+print('Overall sentiment score of adjectives:', TextBlob(' '.join(adjectives)).sentiment)
+

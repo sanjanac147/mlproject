@@ -43,8 +43,8 @@ print(text)
 print("\nLemmatized Text:")
 print(" ".join(lemmatized_text))
 
-
-#8
+-
+#8--------------------
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer, WordNetLemmatizer
@@ -72,7 +72,7 @@ def morphological_analysis(sentence):
 sentence = "Morphological analysis is important for natural language processing."
 morphological_analysis(sentence)
 
-#9
+#9----------------------
 import nltk
 from nltk import bigrams
 from nltk.tokenize import word_tokenize
@@ -106,82 +106,8 @@ def find_bi_gram_frequency(documents):
 # Find and display bi-gram frequency
 find_bi_gram_frequency(documents)
 
-#10
+#10----------------
 
-# Python implementation for the
-# CYK Algorithm
-
-# Non-terminal symbols
-non_terminals = ["NP", "Nom", "Det", "AP", 
-				"Adv", "A"]
-terminals = ["book", "orange", "man", 
-			"tall", "heavy", 
-			"very", "muscular"]
-
-# Rules of the grammar
-R = {
-	"NP": [["Det", "Nom"]],
-	"Nom": [["AP", "Nom"], ["book"], 
-			["orange"], ["man"]],
-	"AP": [["Adv", "A"], ["heavy"], 
-			["orange"], ["tall"]],
-	"Det": [["a"]],
-	"Adv": [["very"], ["extremely"]],
-	"A": [["heavy"], ["orange"], ["tall"], 
-		["muscular"]]
-	}
-
-# Function to perform the CYK Algorithm
-def cykParse(w):
-	n = len(w)
-	
-	# Initialize the table
-	T = [[set([]) for j in range(n)] for i in range(n)]
-
-	# Filling in the table
-	for j in range(0, n):
-
-		# Iterate over the rules
-		for lhs, rule in R.items():
-			for rhs in rule:
-				
-				# If a terminal is found
-				if len(rhs) == 1 and \
-				rhs[0] == w[j]:
-					T[j][j].add(lhs)
-
-		for i in range(j, -1, -1): 
-			
-			# Iterate over the range i to j + 1 
-			for k in range(i, j + 1):	 
-
-				# Iterate over the rules
-				for lhs, rule in R.items():
-					for rhs in rule:
-						
-						# If a terminal is found
-						if len(rhs) == 2 and \
-						rhs[0] in T[i][k] and \
-						rhs[1] in T[k + 1][j]:
-							T[i][j].add(lhs)
-
-	# If word can be formed by rules 
-	# of given grammar
-	if len(T[0][n-1]) != 0:
-		print("True")
-	else:
-		print("False")
-	
-# Driver Code
-
-# Given string
-w = "a very heavy orange book".split()
-
-# Function Call
-cykParse(w)
-
-
-#11
 non_terminals = ["NP", "Nom", "Det", "AP", "Adv", "A"]
 terminals = ["book", "orange", "man", "tall", "heavy", "very", "muscular"]
 R = {
@@ -218,35 +144,54 @@ def cykParse(w):
 w = "a very tall red man".split()
 cykParse(w)
 
-#12
+#11--------------------------
+def min_edit_distance(source, target):
+    m, n = len(source), len(target)
+
+    # Initialize a matrix to store the edit distances
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    print(dp)
+    # Initialize the first row and column
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+
+    # Fill in the matrix using dynamic programming
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            cost = 0 if source[i - 1] == target[j - 1] else 1
+            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1,dp[i - 1][j - 1] + cost)  # Substitution
+
+    # Return the minimum edit distance
+    return dp[m][n]
+
+# Test with example strings
+source_strings = ["intention", "Piece"]
+target_strings = ["execution", "Peace"]
+
+for source, target in zip(source_strings, target_strings):
+    distance = min_edit_distance(source, target)
+    print(f"Source String: {source}")
+    print(f"Target String: {target}")
+    print(f"Minimum Edit Distance: {distance}")
+    print()
+
+#12---------------------------
 import nltk
+
 from textblob import TextBlob
-from nltk import pos_tag, RegexpParser
-from nltk.tree import Tree
-
-# Sample sentence
-sampleSentence = '''This is a very good book, felt really nice reading it.'''
-
-# POS tagging
-sampleSentencePOS = pos_tag(nltk.word_tokenize(sampleSentence))
-
-# Grammar rules to find specific patterns
-PatternsToFind = '''
-    NP: {<JJ><VBG>}
-    NP: {<RB><JJ><NN>}
-'''
-
-# Chunking the listed patterns
-PatternParser = RegexpParser(PatternsToFind)
-ParsedResults = PatternParser.parse(sampleSentencePOS)
-
-# Getting the pattern results from the text data
-for subtree in ParsedResults.subtrees():
-    if isinstance(subtree, Tree) and subtree.label() == 'NP':
-        print(' '.join(word for word, tag in subtree.leaves()))
-
-# Overall sentiment score of adjectives
-adjectives = [word for word, tag in sampleSentencePOS if tag in ['JJ', 'JJR', 'JJS']]
-print('Adjectives:', ' '.join(adjectives))
-print('Overall sentiment score of adjectives:', TextBlob(' '.join(adjectives)).sentiment)
+sampleSentence=''' Learning NLP equips individuals good with skills
+to analyze vast amounts of textual data, build intelligent chatbots,
+automate language-related tasks, and contribute to groundbreaking
+advancements in fields like artificial intelligence and linguistics'''
+sampleSentence = nltk.word_tokenize(sampleSentence)
+sampleSentencePOS = nltk.pos_tag(sampleSentence)
+#Find Nouns or proper Nouns
+OnlyNouns = (" ").join([POStags[0] for POStags in sampleSentencePOS if POStags[1] in ['NN','NNP']])
+# Find only Adjectives
+OnlyAdjectives= (" ").join([POStags[0] for POStags in sampleSentencePOS if POStags[1] in ['JJ','JJR','JJS']])
+print ('Nouns: ', OnlyNouns)
+print ('Adjectives: ', OnlyAdjectives)
+print('Overall sentiment score of ajdectives:',TextBlob(OnlyAdjectives).sentiment)
 

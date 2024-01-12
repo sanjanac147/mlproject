@@ -24,7 +24,7 @@ if result:
 else:
     print("No matching data found.")
 
-#1b
+#1b------------------
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -55,8 +55,8 @@ print(input_text)
 
 print("\nPreprocessed Tokens:")
 print(preprocessed_tokens)
-
-#2b
+-
+#2b-------------------
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -82,7 +82,7 @@ print(f"{n_value}-Grams:")
 for n_gram in result_ngrams:
     print(n_gram)
 
-#3a
+#3a--------------------
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
@@ -107,7 +107,7 @@ input_text = "This is an example sentence This . It contains repeated This words
 
 plot_most_frequent_word(input_text)
 
-#3b
+#3b-----------------
 import re
 def test(string):
   merged = re.split(r"([ ,!]+)", string)
@@ -118,7 +118,7 @@ print("\nOriginal string:",s)
 print("Split the said string into 2 lists: words and separators:")
 print(test(s))
 
-#4a
+#4a----------------------
 import re
 
 def sum_numbers_from_file(file_path):
@@ -143,20 +143,33 @@ result = sum_numbers_from_file(file_path)
 if result is not None:
     print(f"Sum of numbers in the file: {result}")
 
-#4b
-import re
+#4b---------------------------
+import nltk
 
-def extract_capital_words(sentence):
-    pattern = r'\b[A-Z][a-z]*\b'
-    matches = re.findall(pattern, sentence)
-    return matches
+# Generating grammar rules to find such sentences in data
+PatternsToFind = '''NP: {<JJ><VBG>}
+NP: {<RB><JJ><NN>} '''
 
-# Example usage:
-sample_sentence = "This is a Sample sentence with Some Capitalized Words like Python, Regular Expressions, and Programming."
-result = extract_capital_words(sample_sentence)
-print(result)
+sampleSentence = '''This is a very good book, felt really nice reading it.'''
+# sampleSentence = '''Ravi is a bad leader, he misguides the team too often'''
 
-#5b
+# Creating Parts of Speech(POS) tags
+sampleSentence = nltk.word_tokenize(sampleSentence)
+sampleSentencePOS = nltk.pos_tag(sampleSentence)
+
+# Chunking the listed patterns
+PatternParser = nltk.RegexpParser(PatternsToFind)
+ParsedResults = PatternParser.parse(sampleSentencePOS)
+
+# Getting the pattern results from the text data
+for results in ParsedResults:
+    # Printing only the extracted patterns
+    if isinstance(results, nltk.tree.Tree):
+        print(results)
+        results.draw()
+
+
+#5b------------------------------
 
 import nltk
 text = "There is a man on the hill, and I watched him with my telescope. "

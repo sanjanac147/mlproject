@@ -1,3 +1,0 @@
-#kannada grammar
-pos tagging
-stemming
